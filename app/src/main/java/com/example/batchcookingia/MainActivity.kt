@@ -48,23 +48,23 @@ class MainActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             tvMenu.text = ""
 
-            CoroutineScope(Dispatchers.Main).launch {
-                fetchMenu(age, weight, height, intolerances) { menuResult ->
-                    progressBar.visibility = View.GONE
-                    tvMenu.text = menuResult
-                }
+            // Directly call fetchMenu, no need for extra coroutine
+            fetchMenu(age, weight, height, intolerances) { menuResult ->
+                progressBar.visibility = View.GONE
+                tvMenu.text = menuResult
             }
         }
     }
 
-    private suspend fun fetchMenu(
+    private fun fetchMenu(
         age: String,
         weight: String,
         height: String,
         intolerances: String,
         onResult: (String) -> Unit
     ) {
-        withContext(Dispatchers.IO) {
+        // This should run on a background thread (use IO context)
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Crear el prompt basado en los datos del usuario
                 val prompt = """
@@ -77,10 +77,7 @@ class MainActivity : AppCompatActivity() {
                 """.trimIndent()
 
                 val apiKey = "Bearer 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"
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)  // Set timeout for connection
-                    .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)     // Set timeout for reading the response
-                    .build()
+                val client = OkHttpClient()
 
                 // Crear cuerpo de la solicitud
                 val json = JSONObject()
@@ -91,8 +88,9 @@ class MainActivity : AppCompatActivity() {
                     json.toString()  // Using JSONObject for structured data
                 )
 
+                // Change this line to a free model endpoint, like gpt2
                 val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/gpt2") // Replace with a model you have access to
+                    .url("https://api-inference.huggingface.co/models/gpt2") // Use free model
                     .addHeader("Authorization", apiKey)
                     .post(body)
                     .build()
@@ -100,33 +98,31 @@ class MainActivity : AppCompatActivity() {
                 client.newCall(request).enqueue(object : Callback {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
-                            try {
-                                // Parse the response body as JSON if the response is successful
-                                val responseBody = response.body()?.string()
-                                val jsonResponse = JSONObject(responseBody ?: "")
-                                val menu = jsonResponse.optJSONArray("choices")?.optJSONObject(0)?.optString("text")
-                                if (menu != null) {
-                                    onResult(menu)
-                                } else {
-                                    onResult("Error: Response format is not as expected.")
-                                }
-                            } catch (e: Exception) {
-                                onResult("Error parsing the response: ${e.message}")
+                            val menuResponse = response.body()?.string() ?: "No response body"
+                            // Make sure UI updates are done on the main thread
+                            runOnUiThread {
+                                onResult(menuResponse)
                             }
                         } else {
-                            // Log HTTP error codes and responses
+                            // Logging the error code and response body
                             val errorMessage = response.body()?.string() ?: "No error message"
                             val errorCode = response.code()
-                            onResult("Error: HTTP $errorCode - $errorMessage")
+                            runOnUiThread {
+                                onResult("Error: HTTP $errorCode - $errorMessage")
+                            }
                         }
                     }
 
                     override fun onFailure(call: Call, e: IOException) {
-                        onResult("Error al generar el menú: ${e.message}")
+                        runOnUiThread {
+                            onResult("Error al generar el menú: ${e.message}")
+                        }
                     }
                 })
             } catch (e: Exception) {
-                onResult("Error al generar el menú: ${e.message}")
+                runOnUiThread {
+                    onResult("Error al generar el menú: ${e.message}")
+                }
             }
         }
     }
