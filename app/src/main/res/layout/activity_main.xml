@@ -1,19 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:padding="16dp"
+    android:background="@color/colorBackground">
 
+    <!-- Título de la aplicación -->
     <TextView
+        style="@style/TitleTextStyle"
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/app_name"
+        android:textColor="@color/titleTextColor"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Campos para introducir datos del usuario -->
+    <LinearLayout
+        android:id="@+id/userDataLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/titleText"
+        android:layout_marginTop="20dp">
+
+        <!-- Campo para ingresar altura -->
+        <EditText
+            android:id="@+id/heightInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Altura (cm)"
+            style="@style/CustomEditTextStyle"
+            android:inputType="number"
+            android:padding="14dp"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/hintColor" /> <!-- Margen inferior para separar los campos -->
+
+        <!-- Campo para ingresar peso -->
+        <EditText
+            android:id="@+id/weightInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Peso (kg)"
+            android:inputType="number"
+            style="@style/CustomEditTextStyle"
+            android:padding="14dp"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/hintColor"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+
+        <!-- Campo para ingresar edad -->
+        <EditText
+            style="@style/CustomEditTextStyle"
+            android:id="@+id/ageInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Edad"
+            android:inputType="number"
+            android:padding="14dp"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/hintColor"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+
+        <!-- Campo para ingresar intolerancias alimentarias -->
+        <EditText
+            android:id="@+id/intoleranceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Intolerancias alimentarias"
+            android:padding="14dp"
+            style="@style/CustomEditTextStyle"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/hintColor"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+    </LinearLayout>
+
+    <!-- Botón para generar el menú personalizado -->
+    <Button
+        style="@style/CustomButtonStyle"
+        android:id="@+id/generateMenuButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Generar Menú"
+        android:layout_below="@id/userDataLayout"
+        android:layout_marginTop="20dp" />
+
+
+    <!-- Barra de progreso para mostrar que se está generando el menú -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/generateMenuButton"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleHorizontal" />
+
+    <!-- Lista para mostrar el menú semanal generado -->
+    <LinearLayout
+        android:id="@+id/menuListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/progressBar"
+        android:layout_marginTop="20dp">
+
+        <!-- Menú generado dinámicamente se agrega aquí -->
+        <TextView
+            android:id="@+id/menuItem1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lunes: Ensalada de pollo"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/menuItem2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Martes: Sopa de verduras"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <!-- Agregar más TextViews si es necesario -->
+    </LinearLayout>
+</RelativeLayout>

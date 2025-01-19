@@ -1,0 +1,50 @@
+<resources>
+
+    <!-- Tema de la aplicación sin anular los estilos de Material Components -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colores principales -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Usar tu fuente personalizada globalmente -->
+        <item name="android:fontFamily">@font/poppins</item>
+
+        <!-- Asegurarse de que no se apliquen estilos predeterminados en los botones -->
+        <item name="buttonStyle">@style/CustomButtonStyle</item>
+    </style>
+
+    <!-- Estilo para TextViews -->
+    <style name="CustomTextStyle">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Estilo para el título -->
+    <style name="TitleTextStyle">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">@color/titleTextColor</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Estilo personalizado para el botón -->
+    <style name="CustomButtonStyle">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">@color/buttonTextColor</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@drawable/rounded_button</item>
+
+    </style>
+
+    <!-- Estilo para EditText -->
+    <style name="CustomEditTextStyle">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorHint">@color/hintColor</item>
+        <item name="android:background">@drawable/rounded_edittext</item>
+        <item name="android:padding">14dp</item>
+    </style>
+
+</resources>

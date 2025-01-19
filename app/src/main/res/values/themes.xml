@@ -1,9 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Batchcookingia" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Base application theme -->
+    <style name="Base.Theme.Batchcookingia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Fuente personalizada para la aplicación -->
+        <item name="android:fontFamily">@font/poppins</item>
     </style>
 
     <style name="Theme.Batchcookingia" parent="Base.Theme.Batchcookingia" />
+
+    <!-- Tema para la aplicación sin barra de acción -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Definir fuente global -->
+        <item name="android:fontFamily">@font/poppins</item>
+
+        <!-- Definir el estilo para los botones -->
+        <item name="buttonStyle">@style/CustomButtonStyle</item>
+    </style>
 </resources>

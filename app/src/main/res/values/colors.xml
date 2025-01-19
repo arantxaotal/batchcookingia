@@ -1,5 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Colores principales -->
+    <color name="colorPrimary">#4CAF50</color> <!-- Verde claro -->
+    <color name="colorPrimaryDark">#388E3C</color> <!-- Verde oscuro -->
+    <color name="colorAccent">#FF4081</color> <!-- Color de acento (rosa) -->
+
+    <!-- Colores de fondo y superficie -->
+    <color name="colorBackground">#F5F5F5</color> <!-- Fondo claro -->
+    <color name="colorSurface">#FFFFFF</color> <!-- Blanco para la superficie -->
+
+    <!-- Colores de texto -->
+    <color name="textColor">#212121</color> <!-- Texto oscuro -->
+    <color name="titleTextColor">#1B5E20</color> <!-- Verde oscuro para títulos -->
+    <color name="buttonTextColor">#FFFFFF</color> <!-- Blanco para el texto de los botones -->
+    <color name="buttonColor">#4CAF50</color> <!-- Color de fondo del botón -->
+    <color name="hintColor">#9E9E9E</color> <!-- Color del hint (gris claro) -->
+    <color name="borderColor">#CBD3C8</color> <!-- Color del borde (gris claro) -->
+    <color name="lightBackgroundColor">#F5F5F5</color> <!-- Color de fondo suave (gris claro) -->
 </resources>
