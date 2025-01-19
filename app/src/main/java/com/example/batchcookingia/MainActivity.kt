@@ -77,7 +77,10 @@ class MainActivity : AppCompatActivity() {
                 """.trimIndent()
 
                 val apiKey = "Bearer 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"
-                val client = OkHttpClient()
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)  // Set timeout for connection
+                    .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)     // Set timeout for reading the response
+                    .build()
 
                 // Crear cuerpo de la solicitud
                 val json = JSONObject()
@@ -89,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/meta-llama/Llama-3.3-70B-Instruct")
+                    .url("https://api-inference.huggingface.co/models/gpt2") // Replace with a model you have access to
                     .addHeader("Authorization", apiKey)
                     .post(body)
                     .build()
@@ -97,10 +100,21 @@ class MainActivity : AppCompatActivity() {
                 client.newCall(request).enqueue(object : Callback {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
-                            val menuResponse = response.body()?.string() ?: "No response body"
-                            onResult(menuResponse)
+                            try {
+                                // Parse the response body as JSON if the response is successful
+                                val responseBody = response.body()?.string()
+                                val jsonResponse = JSONObject(responseBody ?: "")
+                                val menu = jsonResponse.optJSONArray("choices")?.optJSONObject(0)?.optString("text")
+                                if (menu != null) {
+                                    onResult(menu)
+                                } else {
+                                    onResult("Error: Response format is not as expected.")
+                                }
+                            } catch (e: Exception) {
+                                onResult("Error parsing the response: ${e.message}")
+                            }
                         } else {
-                            // Logging the error code and response body
+                            // Log HTTP error codes and responses
                             val errorMessage = response.body()?.string() ?: "No error message"
                             val errorCode = response.code()
                             onResult("Error: HTTP $errorCode - $errorMessage")
