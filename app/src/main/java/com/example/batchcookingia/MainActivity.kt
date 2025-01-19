@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
+import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -79,9 +80,12 @@ class MainActivity : AppCompatActivity() {
                 val client = OkHttpClient()
 
                 // Crear cuerpo de la solicitud
+                val json = JSONObject()
+                json.put("inputs", prompt)
+
                 val body = RequestBody.create(
-                    MediaType.parse("application/json"),
-                    """{ "inputs": "$prompt" }"""
+                    MediaType.get("application/json"),
+                    json.toString()  // Using JSONObject for structured data
                 )
 
                 val request = Request.Builder()
@@ -96,7 +100,10 @@ class MainActivity : AppCompatActivity() {
                             val menuResponse = response.body()?.string() ?: "No response body"
                             onResult(menuResponse)
                         } else {
-                            onResult("Error: ${response.message()}")
+                            // Logging the error code and response body
+                            val errorMessage = response.body()?.string() ?: "No error message"
+                            val errorCode = response.code()
+                            onResult("Error: HTTP $errorCode - $errorMessage")
                         }
                     }
 
