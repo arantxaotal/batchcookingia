@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -82,7 +83,11 @@ class MainActivity : AppCompatActivity() {
                 """.trimIndent()
 
                 val apiKey = "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" // Replace with your Hugging Face API key
-                val client = OkHttpClient()
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)  // Set connection timeout
+                    .readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
+                    .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
+                    .build()
 
                 // Create JSON body for the API request
                 val json = JSONObject()
