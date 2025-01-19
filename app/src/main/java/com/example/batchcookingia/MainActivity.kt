@@ -1,6 +1,5 @@
 package com.example.batchcookingia
 
-
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -9,6 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.*
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val inputIntolerances: MultiAutoCompleteTextView = findViewById(R.id.intoleranceInput)
         val btnGenerateMenu: Button = findViewById(R.id.generateMenuButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
-        val tvMenu: TextView = findViewById(R.id.menuListLayout)
+        val tvMenu: TextView = findViewById(R.id.menuItem1)
 
         // Configurar opciones para intolerancias
         val intolerancesList = arrayOf("Gluten", "Lactosa", "Nueces", "Soja", "Mariscos", "Huevo")
@@ -74,20 +75,37 @@ class MainActivity : AppCompatActivity() {
                     Incluye lista de ingredientes y preparación detallada.
                 """.trimIndent()
 
-                // Simular llamada a API (o reemplazar con llamada real)
-                kotlinx.coroutines.delay(2000) // Simular el tiempo de respuesta
-                val menuResponse = """
-                    Menú generado (sin incluir: $intolerances):
-                    Lunes: Ensalada César sin gluten
-                    Martes: Pasta integral con pollo
-                    Miércoles: Sopa de verduras
-                    Ingredientes: Pollo, pasta integral, vegetales.
-                    Preparación: Sigue las instrucciones estándar para cada platillo.
-                """.trimIndent()
+                val apiKey = "Bearer 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"
+                val client = OkHttpClient()
 
-                onResult(menuResponse)
+                // Crear cuerpo de la solicitud
+                val body = RequestBody.create(
+                    MediaType.parse("application/json"),
+                    """{ "inputs": "$prompt" }"""
+                )
+
+                val request = Request.Builder()
+                    .url("https://api-inference.huggingface.co/models/meta-llama/Llama-3.3-70B-Instruct")
+                    .addHeader("Authorization", apiKey)
+                    .post(body)
+                    .build()
+
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            val menuResponse = response.body()?.string() ?: "No response body"
+                            onResult(menuResponse)
+                        } else {
+                            onResult("Error: ${response.message()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call, e: IOException) {
+                        onResult("Error al generar el menú: ${e.message}")
+                    }
+                })
             } catch (e: Exception) {
-                onResult("Error al generar el menú.")
+                onResult("Error al generar el menú: ${e.message}")
             }
         }
     }

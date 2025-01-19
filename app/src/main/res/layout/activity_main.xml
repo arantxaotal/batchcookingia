@@ -71,7 +71,7 @@
             android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
 
         <!-- Campo para ingresar intolerancias alimentarias -->
-        <EditText
+        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
             android:id="@+id/intoleranceInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,7 +81,8 @@
             android:textColor="@color/textColor"
             android:textColorHint="@color/hintColor"
             android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+            android:layout_marginBottom="16dp" />
+        <!-- Margen inferior para separar los campos -->
     </LinearLayout>
 
     <!-- Botón para generar el menú personalizado -->
