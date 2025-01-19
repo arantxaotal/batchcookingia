@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Vincular vistas
+        // Bind the views
         val inputAge: EditText = findViewById(R.id.ageInput)
         val inputWeight: EditText = findViewById(R.id.weightInput)
         val inputHeight: EditText = findViewById(R.id.heightInput)
@@ -27,13 +27,13 @@ class MainActivity : AppCompatActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val tvMenu: TextView = findViewById(R.id.menuItem1)
 
-        // Configurar opciones para intolerancias
+        // Set up intolerances options
         val intolerancesList = arrayOf("Gluten", "Lactosa", "Nueces", "Soja", "Mariscos", "Huevo")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, intolerancesList)
         inputIntolerances.setAdapter(adapter)
         inputIntolerances.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
 
-        // Botón para generar el menú
+        // Button to generate menu
         btnGenerateMenu.setOnClickListener {
             val age = inputAge.text.toString().trim()
             val weight = inputWeight.text.toString().trim()
@@ -48,25 +48,27 @@ class MainActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             tvMenu.text = ""
 
-            // Directly call fetchMenu, no need for extra coroutine
-            fetchMenu(age, weight, height, intolerances) { menuResult ->
-                progressBar.visibility = View.GONE
-                tvMenu.text = menuResult
+            // Call the Hugging Face Chat Assistant API to generate menu
+            CoroutineScope(Dispatchers.Main).launch {
+                fetchMenu(age, weight, height, intolerances) { menuResult ->
+                    progressBar.visibility = View.GONE
+                    tvMenu.text = menuResult
+                }
             }
         }
     }
 
-    private fun fetchMenu(
+    // Function to fetch the menu by interacting with Hugging Face Chat Assistant API
+    private suspend fun fetchMenu(
         age: String,
         weight: String,
         height: String,
         intolerances: String,
         onResult: (String) -> Unit
     ) {
-        // This should run on a background thread (use IO context)
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             try {
-                // Crear el prompt basado en los datos del usuario
+                // Create the prompt based on user data
                 val prompt = """
                     Genera un menú semanal equilibrado para una persona con las siguientes características:
                     - Edad: $age años
@@ -79,50 +81,41 @@ class MainActivity : AppCompatActivity() {
                 val apiKey = "Bearer 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"
                 val client = OkHttpClient()
 
-                // Crear cuerpo de la solicitud
+                // Create JSON body for the API request
                 val json = JSONObject()
                 json.put("inputs", prompt)
 
                 val body = RequestBody.create(
-                    MediaType.get("application/json"),
-                    json.toString()  // Using JSONObject for structured data
+                    MediaType.parse("application/json"),
+                    json.toString() // Using JSONObject for structured data
                 )
 
-                // Change this line to a free model endpoint, like gpt2
+                // Change the model endpoint URL to Hugging Face's Chat Assistant
                 val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/gpt2") // Use free model
-                    .addHeader("Authorization", apiKey)
+                    .url("https://api-inference.huggingface.co/models/openai-community/gpt2") // Change to your Chat Assistant model endpoint
+                    .addHeader("Authorization", "Bearer $apiKey")
                     .post(body)
                     .build()
 
+                // Make the API call
                 client.newCall(request).enqueue(object : Callback {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
                             val menuResponse = response.body()?.string() ?: "No response body"
-                            // Make sure UI updates are done on the main thread
-                            runOnUiThread {
-                                onResult(menuResponse)
-                            }
+                            onResult(menuResponse)  // Call back to update UI with the result
                         } else {
-                            // Logging the error code and response body
                             val errorMessage = response.body()?.string() ?: "No error message"
                             val errorCode = response.code()
-                            runOnUiThread {
-                                onResult("Error: HTTP $errorCode - $errorMessage")
-                            }
+                            onResult("Error: HTTP $errorCode - $errorMessage")
                         }
                     }
 
                     override fun onFailure(call: Call, e: IOException) {
-                        runOnUiThread {
-                            onResult("Error al generar el menú: ${e.message}")
-                        }
+                        onResult("Error al generar el menú: ${e.message}")
                     }
                 })
             } catch (e: Exception) {
-                runOnUiThread {
-                    onResult("Error al generar el menú: ${e.message}")
-                }
+                onResult("Error al generar el menú: ${e.message}")
             }
         }
     }
