@@ -1,19 +1,5 @@
 <resources>
 
-    <!-- Tema de la aplicación sin anular los estilos de Material Components -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Colores principales -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <!-- Usar tu fuente personalizada globalmente -->
-        <item name="android:fontFamily">@font/poppins</item>
-
-        <!-- Asegurarse de que no se apliquen estilos predeterminados en los botones -->
-        <item name="buttonStyle">@style/CustomButtonStyle</item>
-    </style>
-
     <!-- Estilo para TextViews -->
     <style name="CustomTextStyle">
         <item name="android:fontFamily">@font/poppins</item>
@@ -35,7 +21,6 @@
         <item name="android:textColor">@color/buttonTextColor</item>
         <item name="android:textSize">18sp</item>
         <item name="android:background">@drawable/rounded_button</item>
-
     </style>
 
     <!-- Estilo para EditText -->

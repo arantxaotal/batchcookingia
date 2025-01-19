@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.batchcookingia"
-    compileSdk = 34
+    compileSdk = 35 // Updated to 35
 
     defaultConfig {
         applicationId = "com.example.batchcookingia"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35 // Updated to 35 for alignment with compileSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -26,17 +26,18 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 dependencies {
-
     implementation("androidx.room:room-runtime:2.4.0")
     implementation("androidx.room:room-ktx:2.4.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

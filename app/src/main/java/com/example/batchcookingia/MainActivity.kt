@@ -17,13 +17,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Vincular vistas
-        val inputAge: EditText = findViewById(R.id.inputAge)
-        val inputWeight: EditText = findViewById(R.id.inputWeight)
-        val inputHeight: EditText = findViewById(R.id.inputHeight)
-        val inputIntolerances: MultiAutoCompleteTextView = findViewById(R.id.inputIntolerances)
-        val btnGenerateMenu: Button = findViewById(R.id.btnGenerateMenu)
+        val inputAge: EditText = findViewById(R.id.ageInput)
+        val inputWeight: EditText = findViewById(R.id.weightInput)
+        val inputHeight: EditText = findViewById(R.id.heightInput)
+        val inputIntolerances: MultiAutoCompleteTextView = findViewById(R.id.intoleranceInput)
+        val btnGenerateMenu: Button = findViewById(R.id.generateMenuButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
-        val tvMenu: TextView = findViewById(R.id.tvMenu)
+        val tvMenu: TextView = findViewById(R.id.menuListLayout)
 
         // Configurar opciones para intolerancias
         val intolerancesList = arrayOf("Gluten", "Lactosa", "Nueces", "Soja", "Mariscos", "Huevo")

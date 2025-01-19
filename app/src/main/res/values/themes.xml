@@ -10,17 +10,11 @@
         <item name="android:fontFamily">@font/poppins</item>
     </style>
 
+    <!-- Theme.Batchcookingia inherits from Base theme -->
     <style name="Theme.Batchcookingia" parent="Base.Theme.Batchcookingia" />
 
-    <!-- Tema para la aplicación sin barra de acción -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <!-- Definir fuente global -->
-        <item name="android:fontFamily">@font/poppins</item>
-
+    <!-- Aplicar tema a la aplicación -->
+    <style name="AppTheme" parent="Theme.Batchcookingia">
         <!-- Definir el estilo para los botones -->
         <item name="buttonStyle">@style/CustomButtonStyle</item>
     </style>
