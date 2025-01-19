@@ -51,8 +51,11 @@ class MainActivity : AppCompatActivity() {
             // Call the Hugging Face Chat Assistant API to generate menu
             CoroutineScope(Dispatchers.Main).launch {
                 fetchMenu(age, weight, height, intolerances) { menuResult ->
-                    progressBar.visibility = View.GONE
-                    tvMenu.text = menuResult
+                    // Post UI updates to the main thread
+                    runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        tvMenu.text = menuResult
+                    }
                 }
             }
         }
@@ -78,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                     Incluye lista de ingredientes y preparación detallada.
                 """.trimIndent()
 
-                val apiKey = "Bearer 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"
+                val apiKey = "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" // Replace with your Hugging Face API key
                 val client = OkHttpClient()
 
                 // Create JSON body for the API request
@@ -102,19 +105,22 @@ class MainActivity : AppCompatActivity() {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
                             val menuResponse = response.body()?.string() ?: "No response body"
-                            onResult(menuResponse)  // Call back to update UI with the result
+                            // Call the onResult callback to pass the result
+                            onResult(menuResponse)  // Will run on the background thread
                         } else {
                             val errorMessage = response.body()?.string() ?: "No error message"
                             val errorCode = response.code()
-                            onResult("Error: HTTP $errorCode - $errorMessage")
+                            onResult("Error: HTTP $errorCode - $errorMessage") // Pass error to callback
                         }
                     }
 
                     override fun onFailure(call: Call, e: IOException) {
+                        // Handle failure
                         onResult("Error al generar el menú: ${e.message}")
                     }
                 })
             } catch (e: Exception) {
+                // Catch any errors that may occur
                 onResult("Error al generar el menú: ${e.message}")
             }
         }
