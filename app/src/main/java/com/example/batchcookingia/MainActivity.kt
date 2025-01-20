@@ -40,12 +40,17 @@ class MainActivity : AppCompatActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val tvMenu: TextView = findViewById(R.id.menuItem1)
         val generatePdfButton: Button = findViewById(R.id.generatePdfButton)
+        val languageselector: Spinner = findViewById(R.id.languageInput)
 
         // Set up intolerances options
         val intolerancesList = arrayOf("None", "Gluten", "Lactose", "Nuts", "Soy", "Shellfish", "Egg")
+        val languageList = arrayOf("English", "Spanish", "French", "German", "Italian", "Japanese", "Chinese", "Korean", "Russian", "Arabic")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, intolerancesList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         inputIntolerances.adapter = adapter  // Set the adapter to Spinner
+        val adapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, languageList)
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        languageselector.adapter = adapter2
 
 
         // Set up the OnClickListener for the PDF generation button
@@ -68,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             val age = inputAge.text.toString().trim()
             val weight = inputWeight.text.toString().trim()
             val height = inputHeight.text.toString().trim()
+            val language = languageselector.selectedItem.toString()
             val intolerances = inputIntolerances.selectedItem.toString()  // Get selected intolerance
 
             if (age.isEmpty() || weight.isEmpty() || height.isEmpty()) {
@@ -80,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
             // Call the Hugging Face Chat Assistant API to generate menu
             CoroutineScope(Dispatchers.Main).launch {
-                fetchMenu(age, weight, height, intolerances) { menuResult ->
+                fetchMenu(age, weight, height, intolerances, language) { menuResult ->
                     // Post UI updates to the main thread
                     runOnUiThread {
                         progressBar.visibility = View.GONE
@@ -97,13 +103,14 @@ class MainActivity : AppCompatActivity() {
         weight: String,
         height: String,
         intolerances: String,
+        language: String,
         onResult: (String) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             try {
 
                 val prompt = """
-    Generate a balanced weekly meal plan based on the following user details:
+    Generate a balanced weekly meal plan based on the following details of me in $language:
     
     - Age: $age
     - Weight: $weight
@@ -116,63 +123,83 @@ class MainActivity : AppCompatActivity() {
 
     MONDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch in a list
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
     TUESDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch in a list
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
     WEDNESDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
-    - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare lunch in a list
+    - DINNER: Name of dinner meal 
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
     THURSDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch in a list
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
-    THURSDAY_END
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
     FRIDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch in a list
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
     SATURDAY:
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch in a list
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare dinner in a list
 
     SUNDAY
     - BREAKFAST: Name of breakfast meal
-    - PREPARATION: Steps to prepare breakfast
+    - PREPARATION: 
+    Steps to prepare breakfast in a list
     - LUNCH: Name of lunch meal
-    - PREPARATION: Steps to prepare lunch
+    - PREPARATION: 
+    Steps to prepare lunch
     - DINNER: Name of dinner meal
-    - PREPARATION: Steps to prepare dinner
+    - PREPARATION: 
+    Steps to prepare dinner in a list
     
-    Please ensure the meals are balanced and appropriate for the user's age, weight, height, and intolerances.
-    Provide a variety of meals for each day, ensuring there are no ingredients that the user is intolerant to.
+    Please ensure the meals are balanced and appropriate for my age, weight, height, and intolerances.
+    Provide a variety of meals for each day, ensuring there are no ingredients that i'm intolerant to.
 """.trimIndent()
 
 
@@ -263,7 +290,7 @@ class MainActivity : AppCompatActivity() {
     private fun generatePdf(menuContent: String) {
         try {
             // Initialize the PdfWriter and PdfDocument
-            val outputDir = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "MenuPDFs")
+            val outputDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "MenuPDFs")
             if (!outputDir.exists()) {
                 outputDir.mkdirs()
             }
@@ -279,7 +306,7 @@ class MainActivity : AppCompatActivity() {
             val font: PdfFont = PdfFontFactory.createFont("Helvetica")
 
             // Add content to the document
-            document.add(Paragraph("Generated Menu\n").setFont(font))
+                document.add(Paragraph("BATCH COOKING WEEK MENU\n").setFont(font))
             document.add(Paragraph(menuContent).setFont(font))
 
             // Close the document and file output stream

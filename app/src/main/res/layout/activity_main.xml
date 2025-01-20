@@ -6,132 +6,154 @@
     android:padding="16dp"
     android:background="@color/colorBackground">
 
-    <!-- Título de la aplicación -->
-    <TextView
-        style="@style/TitleTextStyle"
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/app_name"
-        android:textColor="@color/titleTextColor"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
-    <!-- Campos para introducir datos del usuario -->
-    <LinearLayout
-        android:id="@+id/userDataLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/titleText"
-        android:layout_marginTop="20dp">
+        android:layout_height="wrap_content">
 
-        <!-- Campo para ingresar altura -->
-        <EditText
-            android:id="@+id/heightInput"
+        <!-- Campos para introducir datos del usuario -->
+        <LinearLayout
+            android:id="@+id/userDataLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="Height (cm)"
-            style="@style/CustomEditTextStyle"
-            android:inputType="number"
-            android:padding="14dp"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/hintColor" />
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
 
-        <!-- Campo para ingresar peso -->
-        <EditText
-            android:id="@+id/weightInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Weight (kg)"
-            android:inputType="number"
-            style="@style/CustomEditTextStyle"
-            android:padding="14dp"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/hintColor"
-            android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Campo para ingresar edad -->
-        <EditText
-            style="@style/CustomEditTextStyle"
-            android:id="@+id/ageInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Age"
-            android:inputType="number"
-            android:padding="14dp"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/hintColor"
-            android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp"/>
-
-        <Spinner
-            android:id="@+id/intoleranceInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <!-- Botón para generar el menú personalizado -->
-    <Button
-        style="@style/CustomButtonStyle"
-        android:id="@+id/generateMenuButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Generate Menu"
-        android:layout_below="@id/userDataLayout"
-        android:layout_marginTop="20dp" />
-
-    <!-- Barra de progreso para mostrar que se está generando el menú -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/generateMenuButton"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        style="?android:attr/progressBarStyleHorizontal" />
-
-    <!-- Lista para mostrar el menú semanal generado -->
-    <LinearLayout
-        android:id="@+id/menuListLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/progressBar"
-        android:layout_marginTop="20dp">
-
-        <!-- Menú generado dinámicamente se agrega aquí -->
-        <Button
-            style="@style/Widget.Material3.Button"
-            android:textSize="15dp"
-            android:id="@+id/generatePdfButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Generate PDF"
-            android:backgroundTint="@color/colorAccent"
-            android:layout_below="@id/menuItem1"
-            android:layout_marginTop="20dp"/>
-
-        <!-- Wrap the TextView inside a ScrollView -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <!-- Título de la aplicación -->
+            <ImageView
+                android:id="@+id/logoImageView"
+                android:layout_width="175dp"
+                android:layout_height="131dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/cook"/>
 
             <TextView
-                android:id="@+id/menuItem1"
+                style="@style/TitleTextStyle"
+                android:id="@+id/titleText"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/app_name"
+                android:textColor="@color/titleTextColor"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:text="Insert your health information"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- Campo para ingresar edad -->
+            <EditText
+                android:id="@+id/ageInput"
+                style="@style/CustomEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="Age"
+                android:inputType="number"
+                android:padding="14dp"
                 android:textColor="@color/textColor"
-                android:textSize="16sp"
-                android:padding="8dp" />
-        </ScrollView>
+                android:textColorHint="@color/hintColor" />
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/heightInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="Height (cm)"
+                style="@style/CustomEditTextStyle"
+                android:inputType="number"
+                android:padding="14dp"
+                android:textColor="@color/textColor"
+                android:textColorHint="@color/hintColor" />
+
+            <!-- Campo para ingresar peso -->
+            <EditText
+                android:id="@+id/weightInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Weight (kg)"
+                android:inputType="number"
+                style="@style/CustomEditTextStyle"
+                android:padding="14dp"
+                android:textColor="@color/textColor"
+                android:textColorHint="@color/hintColor"
+                android:background="@drawable/rounded_edittext"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Campo para seleccionar intolerancias -->
+            <TextView
+                android:text="Select your allergens"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/intoleranceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginTop="10dp"
+                android:text="Select your language"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/languageInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/generateMenuButton"
+                style="@style/CustomButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Generate Menu" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+                <Button
+                    android:id="@+id/generatePdfButton"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/titleTextColor"
+                    android:drawableEnd="@drawable/baseline_picture_as_pdf_24"
+                    android:text="Save"
+                    android:textSize="15dp" />
+
+
+                <TextView
+                    android:id="@+id/menuItem1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/textColor"
+                    android:textSize="16sp" />
+
+
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Botón para generar el menú personalizado -->
+
+    <!-- Barra de progreso para mostrar que se está generando el menú -->
+
 
 </RelativeLayout>
