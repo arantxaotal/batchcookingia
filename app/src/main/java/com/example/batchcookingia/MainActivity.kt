@@ -6,8 +6,9 @@ import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.pager.PageSize
-import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.font.PdfFont
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
@@ -38,9 +39,7 @@ class MainActivity : AppCompatActivity() {
         val btnGenerateMenu: Button = findViewById(R.id.generateMenuButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val tvMenu: TextView = findViewById(R.id.menuItem1)
-        val btnGeneratePdf: Button = findViewById(R.id.generatePdfButton)
-
-
+        val generatePdfButton: Button = findViewById(R.id.generatePdfButton)
 
         // Set up intolerances options
         val intolerancesList = arrayOf("None", "Gluten", "Lactose", "Nuts", "Soy", "Shellfish", "Egg")
@@ -48,8 +47,13 @@ class MainActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         inputIntolerances.adapter = adapter  // Set the adapter to Spinner
 
-        btnGeneratePdf.setOnClickListener {
+
+        // Set up the OnClickListener for the PDF generation button
+        generatePdfButton.setOnClickListener {
+            // Get the menu content text from TextView
             val menuContent = tvMenu.text.toString()
+
+            // Check if the menu content is empty
             if (menuContent.isEmpty()) {
                 Toast.makeText(this, "Menu is empty, cannot generate PDF.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -58,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             // Call the function to generate and save the PDF
             generatePdf(menuContent)
         }
+
         // Button to generate menu
         btnGenerateMenu.setOnClickListener {
             val age = inputAge.text.toString().trim()
@@ -254,11 +259,10 @@ class MainActivity : AppCompatActivity() {
         return lines[1]
     }
 
-
     // Function to generate and save the PDF
     private fun generatePdf(menuContent: String) {
         try {
-            val document = Document(PageSize.A4)
+            // Initialize the PdfWriter and PdfDocument
             val outputDir = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "MenuPDFs")
             if (!outputDir.exists()) {
                 outputDir.mkdirs()
@@ -266,15 +270,19 @@ class MainActivity : AppCompatActivity() {
             val file = File(outputDir, "Menu_${System.currentTimeMillis()}.pdf")
             val fileOutputStream = FileOutputStream(file)
 
-            // Initialize PdfWriter
-            PdfWriter.getInstance(document, fileOutputStream)
-            document.open()
+            // Initialize PdfWriter for iText 7
+            val pdfWriter = PdfWriter(fileOutputStream)
+            val pdfDocument = PdfDocument(pdfWriter)
+            val document = Document(pdfDocument)
 
-            // Set up the content to add to PDF
-            val font = com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12f)
-            document.add(Paragraph("Generated Menu\n", font))
-            document.add(Paragraph(menuContent, font))
+            // Set up the font (using a built-in font in iText 7, like Helvetica or Times-Roman)
+            val font: PdfFont = PdfFontFactory.createFont("Helvetica")
 
+            // Add content to the document
+            document.add(Paragraph("Generated Menu\n").setFont(font))
+            document.add(Paragraph(menuContent).setFont(font))
+
+            // Close the document and file output stream
             document.close()
             fileOutputStream.close()
 
