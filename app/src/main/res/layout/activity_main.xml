@@ -107,6 +107,16 @@
         android:layout_marginTop="20dp">
 
         <!-- Menú generado dinámicamente se agrega aquí -->
+        <Button
+            style="@style/Widget.Material3.Button"
+            android:textSize="15dp"
+            android:id="@+id/generatePdfButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate PDF"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_below="@id/menuItem1"
+            android:layout_marginTop="20dp"/>
 
         <!-- Wrap the TextView inside a ScrollView -->
         <ScrollView

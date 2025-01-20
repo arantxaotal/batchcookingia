@@ -2,9 +2,15 @@ package com.example.batchcookingia
 
 import android.app.VoiceInteractor.Prompt
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.pager.PageSize
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +20,8 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import org.json.JSONArray
+import java.io.File
+import java.io.FileOutputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         val btnGenerateMenu: Button = findViewById(R.id.generateMenuButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val tvMenu: TextView = findViewById(R.id.menuItem1)
+        val btnGeneratePdf: Button = findViewById(R.id.generatePdfButton)
+
+
 
         // Set up intolerances options
         val intolerancesList = arrayOf("None", "Gluten", "Lactose", "Nuts", "Soy", "Shellfish", "Egg")
@@ -37,6 +48,16 @@ class MainActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         inputIntolerances.adapter = adapter  // Set the adapter to Spinner
 
+        btnGeneratePdf.setOnClickListener {
+            val menuContent = tvMenu.text.toString()
+            if (menuContent.isEmpty()) {
+                Toast.makeText(this, "Menu is empty, cannot generate PDF.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Call the function to generate and save the PDF
+            generatePdf(menuContent)
+        }
         // Button to generate menu
         btnGenerateMenu.setOnClickListener {
             val age = inputAge.text.toString().trim()
@@ -231,5 +252,37 @@ class MainActivity : AppCompatActivity() {
         // You can add additional formatting or adjustments as necessary
         lines[1].replace("---", "")
         return lines[1]
+    }
+
+
+    // Function to generate and save the PDF
+    private fun generatePdf(menuContent: String) {
+        try {
+            val document = Document(PageSize.A4)
+            val outputDir = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "MenuPDFs")
+            if (!outputDir.exists()) {
+                outputDir.mkdirs()
+            }
+            val file = File(outputDir, "Menu_${System.currentTimeMillis()}.pdf")
+            val fileOutputStream = FileOutputStream(file)
+
+            // Initialize PdfWriter
+            PdfWriter.getInstance(document, fileOutputStream)
+            document.open()
+
+            // Set up the content to add to PDF
+            val font = com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.TIMES_ROMAN, 12f)
+            document.add(Paragraph("Generated Menu\n", font))
+            document.add(Paragraph(menuContent, font))
+
+            document.close()
+            fileOutputStream.close()
+
+            // Notify user of success
+            Toast.makeText(this, "PDF generated and saved at ${file.absolutePath}", Toast.LENGTH_LONG).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error generating PDF: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 }
