@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             try {
 
                 val prompt = """
-    Generate a balanced weekly meal plan based on the following details of me in $language:
+    Generate a balanced weekly meal plan in $language based on the following details of me:
     
     - Age: $age
     - Weight: $weight
@@ -123,78 +123,113 @@ class MainActivity : AppCompatActivity() {
 
     MONDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
     TUESDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
     WEDNESDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal 
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
     THURSDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
     FRIDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
     SATURDAY:
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch in a list
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
 
     SUNDAY
     - BREAKFAST: Name of breakfast meal
+    
     - PREPARATION: 
     Steps to prepare breakfast in a list
+    
     - LUNCH: Name of lunch meal
+    
     - PREPARATION: 
     Steps to prepare lunch
+    
     - DINNER: Name of dinner meal
+    
     - PREPARATION: 
     Steps to prepare dinner in a list
     
