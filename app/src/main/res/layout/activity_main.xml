@@ -70,18 +70,11 @@
             android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
 
-        <!-- Campo para ingresar intolerancias alimentarias -->
-        <androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView
+        <Spinner
             android:id="@+id/intoleranceInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Intolerancias alimentarias"
-            android:padding="14dp"
-            style="@style/CustomEditTextStyle"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/hintColor"
-            android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="wrap_content" />
+
         <!-- Margen inferior para separar los campos -->
     </LinearLayout>
 
@@ -117,23 +110,15 @@
 
         <!-- Menú generado dinámicamente se agrega aquí -->
         <TextView
+            android:text="Menú generado:"
             android:id="@+id/menuItem1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lunes: Ensalada de pollo"
-            android:textColor="@color/textColor"
-            android:textSize="16sp"
-            android:padding="8dp" />
-
-        <TextView
-            android:id="@+id/menuItem2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Martes: Sopa de verduras"
             android:textColor="@color/textColor"
             android:textSize="16sp"
             android:padding="8dp" />
 
         <!-- Agregar más TextViews si es necesario -->
+
     </LinearLayout>
 </RelativeLayout>
