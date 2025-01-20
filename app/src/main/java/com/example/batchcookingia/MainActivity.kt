@@ -12,6 +12,8 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import org.json.JSONArray
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -164,11 +166,13 @@ class MainActivity : AppCompatActivity() {
 
     fun parseMenu(response: String): String {
         try {
-            // Parse the response JSON to extract the "generated_text" field
-            val jsonResponse = JSONObject(response)
-            val generatedText = jsonResponse.getJSONArray("generated_text").getString(0)
+            // Parse the response as a JSONArray instead of JSONObject
+            val jsonResponse = JSONArray(response)
 
-            // Now, we need to clean and format the generated text into a presentable form
+            // Get the first element of the array (which contains the generated text)
+            val generatedText = jsonResponse.getJSONObject(0).getString("generated_text")
+
+            // Now format the meal plan based on the generated text
             val formattedResponse = formatMealPlan(generatedText)
 
             return formattedResponse
@@ -204,5 +208,4 @@ class MainActivity : AppCompatActivity() {
         // You can add additional formatting or adjustments as necessary
         return formattedText
     }
-
 }
