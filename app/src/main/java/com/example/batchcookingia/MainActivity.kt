@@ -74,12 +74,12 @@ class MainActivity : AppCompatActivity() {
             try {
                 // Create the prompt based on user data
                 val prompt = """
-                    Genera un menú semanal equilibrado para una persona con las siguientes características:
-                    - Edad: $age años
-                    - Peso: $weight kg
-                    - Altura: $height cm
-                    - Intolerancias alimentarias: ${if (intolerances.isEmpty()) "Ninguna" else intolerances}
-                    Incluye lista de ingredientes y preparación detallada.
+                    Generate a healthy week menu in a table for a person who has the following characteristics:
+                    - Age: $age years old
+                    - Weight: $weight kg
+                    - Height: $height cm
+                    - Intolerances: ${if (intolerances.isEmpty()) "Ninguna" else intolerances}
+                    Then include a list of ingredients and the details of preparation of the menu in two hours.
                 """.trimIndent()
 
                 val apiKey = "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" // Replace with your Hugging Face API key
