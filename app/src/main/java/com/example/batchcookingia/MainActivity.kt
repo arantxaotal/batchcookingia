@@ -48,9 +48,15 @@ class MainActivity : AppCompatActivity() {
         favoriteButton.visibility = View.GONE
 
         favoriteButton.setOnClickListener {
-            Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
-            favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
-            favoriteButton.isEnabled = false
+            Toast.makeText(this, "Added to favorites.", Toast.LENGTH_SHORT).show()
+            if (favoriteButton.drawable.constantState == resources.getDrawable(R.drawable.baseline_favorite_border_24).constantState) {
+                setFavorite(true)
+            }
+            else {
+                setFavorite(false)
+            }
+
+
         }
 
         // Set up intolerances options
@@ -98,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
             // Call the Hugging Face Chat Assistant API to generate menu
             CoroutineScope(Dispatchers.Main).launch {
-                fetchMenu(tvMenu, favoriteButton, age, weight, height, intolerances, language) { menuResult ->
+                fetchMenu(favoriteButton, tvMenu, age, weight, height, intolerances, language) { menuResult ->
                     // Post UI updates to the main thread
                     runOnUiThread {
                         loadingAnimation.visibility = View.GONE
@@ -110,10 +116,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setFavorite(isFavorite: Boolean) {
+        val favoriteButton: ImageButton = findViewById(R.id.favoriteButton)
+        if (isFavorite) {
+            favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
+        } else {
+            favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
+        }
+    }
+
+    private fun calculeIMC(weight: Double, height: Double): Double {
+        return weight / (height * height)
+    }
+
+    // Function to fetch the menu by interacting with Hugging Face Chat Assistant API
     // Function to fetch the menu by interacting with Hugging Face Chat Assistant API
     private suspend fun fetchMenu(
-        tvMenu: TextView,
         favoriteButton: ImageButton,
+        tvMenu: TextView,
         age: String,
         weight: String,
         height: String,
@@ -123,9 +143,9 @@ class MainActivity : AppCompatActivity() {
     ) {
         withContext(Dispatchers.IO) {
 
-                try {
+            try {
 
-                    val prompt = """
+                val prompt = """
     Generate a balanced weekly meal plan in $language based on the following details of me:
     
     - Age: $age
@@ -253,77 +273,67 @@ class MainActivity : AppCompatActivity() {
     Provide a variety of meals for each day, ensuring there are no ingredients that i'm intolerant to.
 """.trimIndent()
 
+                val apiKey = "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"
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .build()
 
-                    val apiKey =
-                        "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" // Replace with your Hugging Face API key
-                    val client = OkHttpClient.Builder()
-                        .connectTimeout(30, TimeUnit.SECONDS)  // Set connection timeout
-                        .readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
-                        .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
-                        .build()
-
-                    // Create JSON body for the API request
-                    val json = JSONObject()
-                    json.put("inputs", prompt)
-
-                    val body = RequestBody.create(
-                        MediaType.parse("application/json"),
-                        json.toString() // Using JSONObject for structured data
-                    )
-
-                    // Change the model endpoint URL to Hugging Face's Chat Assistant
-                    val request = Request.Builder()
-                        .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2") // Change to your Chat Assistant model endpoint
-                        .addHeader("Authorization", "Bearer $apiKey")
-                        .post(body)
-                        .build()
-
-                    // Make the API call
-                    client.newCall(request).enqueue(object : Callback {
-                        override fun onResponse(call: Call, response: Response) {
-                            if (response.isSuccessful) {
-                                val responseBody = response.body()?.string() ?: "No response body"
-                                try {
-
-                                    val menuContent = parseMenu(responseBody, prompt)
-                                    onResult(responseBody)
-                                    tvMenu.text = menuContent
-                                    favoriteButton.visibility = View.VISIBLE
-                                } catch (e: Exception) {
-                                    onResult("Error: Received non-JSON response from the API.")
-                                }
-                            } else {
-                                val errorMessage = response.body()?.string() ?: "No error message"
-                                val errorCode = response.code()
-                                onResult("Error: HTTP $errorCode - $errorMessage")
-                            }
-                        }
-
-                        override fun onFailure(call: Call, e: IOException) {
-                            // Handle failure
-                            onResult("Error generating the menu. Restart.")
-                        }
-                    })
-                } catch (e: Exception) {
-                    // Catch any errors that may occur
-                    onResult("Error generating the menu. Restart.")
+                val json = JSONObject().apply {
+                    put("inputs", prompt)
                 }
+
+                val body = RequestBody.create(
+                    MediaType.parse("application/json"),
+                    json.toString()
+                )
+
+                val request = Request.Builder()
+                    .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2")
+                    .addHeader("Authorization", "Bearer $apiKey")
+                    .post(body)
+                    .build()
+
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string() ?: "No response body"
+                    try {
+                        val menuContent = parseMenu(responseBody, prompt)
+                        withContext(Dispatchers.Main) {
+                            favoriteButton.visibility = View.VISIBLE
+                            onResult(menuContent)
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            onResult("Error: Received non-JSON response from the API.")
+                        }
+                    }
+                } else {
+                    val errorMessage = response.body()?.string() ?: "No error message"
+                    val errorCode = response.code()
+                    withContext(Dispatchers.Main) {
+                        onResult("Error: HTTP $errorCode - $errorMessage")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onResult("Error generating the menu. Please restart.")
+                }
+            }
 
         }
     }
 
 
 
+
     fun parseMenu(response: String, prompt: String): String {
         try {
             // Parse the response as a JSONArray instead of JSONObject
-            val jsonResponse = JSONArray(response)
-
-            // Get the first element of the array (which contains the generated text)
-            val generatedText = jsonResponse.getJSONObject(0).getString("generated_text")
 
             // Now format the meal plan based on the generated text
-            val formattedResponse = formatMealPlan(generatedText, prompt)
+            val formattedResponse = formatMealPlan(response, prompt)
 
             return formattedResponse
         } catch (e: Exception) {
@@ -334,13 +344,17 @@ class MainActivity : AppCompatActivity() {
     fun formatMealPlan(generatedText: String, prompt: String): String {
         // You can further process the text as needed, for now, simply returning it
         // Format the output nicely by splitting into days
+        val resp = JSONArray(generatedText)
+
+        // Get the first element of the array (which contains the generated text)
+        val generatedText = resp.getJSONObject(0).getString("generated_text")
 
 
         // Split the generated text by lines, and process accordingly
         val lines = generatedText.split(prompt)
         // You can add additional formatting or adjustments as necessary
-        lines[1].replace("---", "")
-        return lines[1]
+        val result = lines[1].replace("---", "")
+        return result
     }
 
     // Function to generate and save the PDF
