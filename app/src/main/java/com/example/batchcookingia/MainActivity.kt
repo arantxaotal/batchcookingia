@@ -6,6 +6,7 @@ import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -14,6 +15,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
@@ -37,10 +39,19 @@ class MainActivity : AppCompatActivity() {
         val inputHeight: EditText = findViewById(R.id.heightInput)
         val inputIntolerances: Spinner = findViewById(R.id.intoleranceInput)  // Change to Spinner
         val btnGenerateMenu: Button = findViewById(R.id.generateMenuButton)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val tvMenu: TextView = findViewById(R.id.menuItem1)
         val generatePdfButton: Button = findViewById(R.id.generatePdfButton)
         val languageselector: Spinner = findViewById(R.id.languageInput)
+        val loadingAnimation: LottieAnimationView = findViewById(R.id.loadingAnimation)
+        val favoriteButton: ImageButton = findViewById(R.id.favoriteButton)
+
+        favoriteButton.visibility = View.GONE
+
+        favoriteButton.setOnClickListener {
+            Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
+            favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
+            favoriteButton.isEnabled = false
+        }
 
         // Set up intolerances options
         val intolerancesList = arrayOf("None", "Gluten", "Lactose", "Nuts", "Soy", "Shellfish", "Egg")
@@ -81,15 +92,17 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            progressBar.visibility = View.VISIBLE
+            loadingAnimation.visibility = View.VISIBLE
+            loadingAnimation.playAnimation()
             tvMenu.text = ""
 
             // Call the Hugging Face Chat Assistant API to generate menu
             CoroutineScope(Dispatchers.Main).launch {
-                fetchMenu(age, weight, height, intolerances, language) { menuResult ->
+                fetchMenu(tvMenu, favoriteButton, age, weight, height, intolerances, language) { menuResult ->
                     // Post UI updates to the main thread
                     runOnUiThread {
-                        progressBar.visibility = View.GONE
+                        loadingAnimation.visibility = View.GONE
+                        loadingAnimation.cancelAnimation()
                         tvMenu.text = menuResult
                     }
                 }
@@ -99,6 +112,8 @@ class MainActivity : AppCompatActivity() {
 
     // Function to fetch the menu by interacting with Hugging Face Chat Assistant API
     private suspend fun fetchMenu(
+        tvMenu: TextView,
+        favoriteButton: ImageButton,
         age: String,
         weight: String,
         height: String,
@@ -107,9 +122,10 @@ class MainActivity : AppCompatActivity() {
         onResult: (String) -> Unit
     ) {
         withContext(Dispatchers.IO) {
-            try {
 
-                val prompt = """
+                try {
+
+                    val prompt = """
     Generate a balanced weekly meal plan in $language based on the following details of me:
     
     - Age: $age
@@ -238,55 +254,60 @@ class MainActivity : AppCompatActivity() {
 """.trimIndent()
 
 
-                val apiKey = "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" // Replace with your Hugging Face API key
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)  // Set connection timeout
-                    .readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
-                    .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
-                    .build()
+                    val apiKey =
+                        "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" // Replace with your Hugging Face API key
+                    val client = OkHttpClient.Builder()
+                        .connectTimeout(30, TimeUnit.SECONDS)  // Set connection timeout
+                        .readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
+                        .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
+                        .build()
 
-                // Create JSON body for the API request
-                val json = JSONObject()
-                json.put("inputs", prompt)
+                    // Create JSON body for the API request
+                    val json = JSONObject()
+                    json.put("inputs", prompt)
 
-                val body = RequestBody.create(
-                    MediaType.parse("application/json"),
-                    json.toString() // Using JSONObject for structured data
-                )
+                    val body = RequestBody.create(
+                        MediaType.parse("application/json"),
+                        json.toString() // Using JSONObject for structured data
+                    )
 
-                // Change the model endpoint URL to Hugging Face's Chat Assistant
-                val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2") // Change to your Chat Assistant model endpoint
-                    .addHeader("Authorization", "Bearer $apiKey")
-                    .post(body)
-                    .build()
+                    // Change the model endpoint URL to Hugging Face's Chat Assistant
+                    val request = Request.Builder()
+                        .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2") // Change to your Chat Assistant model endpoint
+                        .addHeader("Authorization", "Bearer $apiKey")
+                        .post(body)
+                        .build()
 
-                // Make the API call
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()?.string() ?: "No response body"
-                            try {
-                                onResult(parseMenu(responseBody, prompt))
-                            } catch (e: Exception) {
-                                onResult("Error: Received non-JSON response from the API.")
+                    // Make the API call
+                    client.newCall(request).enqueue(object : Callback {
+                        override fun onResponse(call: Call, response: Response) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()?.string() ?: "No response body"
+                                try {
+                                    val menuContent = parseMenu(responseBody, prompt)
+                                    onResult(menuContent)
+                                    tvMenu.text = menuContent
+                                    favoriteButton.visibility = View.VISIBLE
+                                } catch (e: Exception) {
+                                    onResult("Error: Received non-JSON response from the API.")
+                                }
+                            } else {
+                                val errorMessage = response.body()?.string() ?: "No error message"
+                                val errorCode = response.code()
+                                onResult("Error: HTTP $errorCode - $errorMessage")
                             }
-                        } else {
-                            val errorMessage = response.body()?.string() ?: "No error message"
-                            val errorCode = response.code()
-                            onResult("Error: HTTP $errorCode - $errorMessage")
                         }
-                    }
 
-                    override fun onFailure(call: Call, e: IOException) {
-                        // Handle failure
-                        onResult("Error generating the menu: ${e.message}")
-                    }
-                })
-            } catch (e: Exception) {
-                // Catch any errors that may occur
-                onResult("Error generating the menu: ${e.message}")
-            }
+                        override fun onFailure(call: Call, e: IOException) {
+                            // Handle failure
+                            onResult("Error generating the menu. Restart.")
+                        }
+                    })
+                } catch (e: Exception) {
+                    // Catch any errors that may occur
+                    onResult("Error generating the menu. Restart.")
+                }
+
         }
     }
 

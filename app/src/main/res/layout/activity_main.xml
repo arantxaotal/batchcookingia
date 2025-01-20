@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:background="@color/colorBackground">
 
@@ -115,31 +116,49 @@
                 android:layout_marginTop="20dp"
                 android:text="Generate Menu" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/generatePdfButton"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/titleTextColor"
+        android:drawableEnd="@drawable/baseline_picture_as_pdf_24"
+        android:text="Save"
+        android:textSize="15dp" />
+    <ImageButton
+        android:id="@+id/favoriteButton"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/baseline_favorite_border_24" />
+    >
+</LinearLayout>
+
+
+            <!-- Lottie Animation for Loading -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loadingAnimation"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
                 android:visibility="gone"
-                style="?android:attr/progressBarStyleHorizontal" />
-
-                <Button
-                    android:id="@+id/generatePdfButton"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:backgroundTint="@color/titleTextColor"
-                    android:drawableEnd="@drawable/baseline_picture_as_pdf_24"
-                    android:text="Save"
-                    android:textSize="15dp" />
-
-
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading" />
                 <TextView
                     android:id="@+id/menuItem1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
+                    android:paddingBottom="200dp"
                     android:textColor="@color/textColor"
                     android:textSize="16sp" />
 
