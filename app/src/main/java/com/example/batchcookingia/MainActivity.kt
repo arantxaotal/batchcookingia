@@ -1,5 +1,6 @@
 package com.example.batchcookingia
 
+import android.app.VoiceInteractor.Prompt
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -85,25 +86,64 @@ class MainActivity : AppCompatActivity() {
 
     Please follow this format for the meal plan, providing the name of the meals and their preparation steps for each day of the week (Monday to Sunday):
 
-    LIST_OF_TOTAL_INGREDIENTS: Provide a list of all ingredients needed for the entire week (comma separated).
+    LIST OF INGREDIENTS: Provide a list of all ingredients quantities needed for the entire week(comma separated).
 
     MONDAY:
-    - MONDAY_BREAKFAST_NAME: Name of breakfast meal
-    - MONDAY_BREAKFAST_PREPARATION: Steps to prepare breakfast
-    - MONDAY_LUNCH_NAME: Name of lunch meal
-    - MONDAY_LUNCH_PREPARATION: Steps to prepare lunch
-    - MONDAY_DINNER_NAME: Name of dinner meal
-    - MONDAY_DINNER_PREPARATION: Steps to prepare dinner
-
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
+    
     TUESDAY:
-    - TUESDAY_BREAKFAST_NAME: Name of breakfast meal
-    - TUESDAY_BREAKFAST_PREPARATION: Steps to prepare breakfast
-    - TUESDAY_LUNCH_NAME: Name of lunch meal
-    - TUESDAY_LUNCH_PREPARATION: Steps to prepare lunch
-    - TUESDAY_DINNER_NAME: Name of dinner meal
-    - TUESDAY_DINNER_PREPARATION: Steps to prepare dinner
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
+    
+    WEDNESDAY:
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
+    
+    THURSDAY:
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
+    THURSDAY_END
+    
+    FRIDAY:
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
+    
+    SATURDAY:
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
 
-    (Repeat the same structure for the rest of the week: Wednesday, Thursday, Friday, Saturday, Sunday)
+    SUNDAY
+    - BREAKFAST: Name of breakfast meal
+    - PREPARATION: Steps to prepare breakfast
+    - LUNCH: Name of lunch meal
+    - PREPARATION: Steps to prepare lunch
+    - DINNER: Name of dinner meal
+    - PREPARATION: Steps to prepare dinner
     
     Please ensure the meals are balanced and appropriate for the user's age, weight, height, and intolerances.
     Provide a variety of meals for each day, ensuring there are no ingredients that the user is intolerant to.
@@ -139,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             val responseBody = response.body()?.string() ?: "No response body"
                             try {
-                                onResult(parseMenu(responseBody))
+                                onResult(parseMenu(responseBody, prompt))
                             } catch (e: Exception) {
                                 onResult("Error: Received non-JSON response from the API.")
                             }
@@ -164,7 +204,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun parseMenu(response: String): String {
+    fun parseMenu(response: String, prompt: String): String {
         try {
             // Parse the response as a JSONArray instead of JSONObject
             val jsonResponse = JSONArray(response)
@@ -173,7 +213,7 @@ class MainActivity : AppCompatActivity() {
             val generatedText = jsonResponse.getJSONObject(0).getString("generated_text")
 
             // Now format the meal plan based on the generated text
-            val formattedResponse = formatMealPlan(generatedText)
+            val formattedResponse = formatMealPlan(generatedText, prompt)
 
             return formattedResponse
         } catch (e: Exception) {
@@ -181,31 +221,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun formatMealPlan(generatedText: String): String {
+    fun formatMealPlan(generatedText: String, prompt: String): String {
         // You can further process the text as needed, for now, simply returning it
         // Format the output nicely by splitting into days
-        val daysOfWeek = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
 
-        var formattedText = ""
-        var currentDay = ""
 
         // Split the generated text by lines, and process accordingly
-        val lines = generatedText.split("\n")
-
-        for (line in lines) {
-            val dayFound = daysOfWeek.find { line.contains(it) }
-
-            if (dayFound != null) {
-                // If we find a day, add it as the current day header
-                currentDay = dayFound
-                formattedText += "\n$currentDay:\n"
-            } else if (currentDay.isNotEmpty()) {
-                // Otherwise, append meal information for the current day
-                formattedText += "$line\n"
-            }
-        }
-
+        val lines = generatedText.split(prompt)
         // You can add additional formatting or adjustments as necessary
-        return formattedText
+        lines[1].replace("---", "")
+        return lines[1]
     }
 }
