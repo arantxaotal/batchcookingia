@@ -284,8 +284,9 @@ class MainActivity : AppCompatActivity() {
                             if (response.isSuccessful) {
                                 val responseBody = response.body()?.string() ?: "No response body"
                                 try {
+
                                     val menuContent = parseMenu(responseBody, prompt)
-                                    onResult(menuContent)
+                                    onResult(responseBody)
                                     tvMenu.text = menuContent
                                     favoriteButton.visibility = View.VISIBLE
                                 } catch (e: Exception) {
