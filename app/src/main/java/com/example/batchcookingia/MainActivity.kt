@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Change the model endpoint URL to Hugging Face's Chat Assistant
                 val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/openai-community/gpt2") // Change to your Chat Assistant model endpoint
+                    .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2") // Change to your Chat Assistant model endpoint
                     .addHeader("Authorization", "Bearer $apiKey")
                     .post(body)
                     .build()
