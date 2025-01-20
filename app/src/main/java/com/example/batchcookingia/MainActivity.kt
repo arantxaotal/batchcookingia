@@ -6,6 +6,7 @@ import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
@@ -48,14 +49,19 @@ class MainActivity : AppCompatActivity() {
         favoriteButton.visibility = View.GONE
 
         favoriteButton.setOnClickListener {
-            Toast.makeText(this, "Added to favorites.", Toast.LENGTH_SHORT).show()
-            if (favoriteButton.drawable.constantState == resources.getDrawable(R.drawable.baseline_favorite_border_24).constantState) {
+            // Get the drawable for the border (unfilled) version of the favorite icon
+            val borderDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_favorite_border_24)
+            // Get the current drawable from the ImageButton
+            val currentDrawable = favoriteButton.drawable
+
+            // Check if the current drawable is the border (unfilled) version
+            if (currentDrawable.constantState == borderDrawable?.constantState) {
+                // It's the border (unfilled) version, so set favorite to true
                 setFavorite(true)
-            }
-            else {
+            } else {
+                // It's not the border (unfilled) version, so set favorite to false
                 setFavorite(false)
             }
-
 
         }
 
@@ -119,11 +125,16 @@ class MainActivity : AppCompatActivity() {
     private fun setFavorite(isFavorite: Boolean) {
         val favoriteButton: ImageButton = findViewById(R.id.favoriteButton)
         if (isFavorite) {
-            favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
+            // Get the filled (favorite) drawable using ContextCompat
+            val filledDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_favorite_border_24)
+            favoriteButton.setImageDrawable(filledDrawable)
         } else {
-            favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
+            // Get the border (unfilled) drawable using ContextCompat
+            val borderDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_favorite_24)
+            favoriteButton.setImageDrawable(borderDrawable)
         }
     }
+
 
     private fun calculeIMC(weight: Double, height: Double): Double {
         return weight / (height * height)
