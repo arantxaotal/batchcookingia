@@ -35,26 +35,26 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rounded_edittext"
-            android:hint="Altura (cm)"
+            android:hint="Height (cm)"
             style="@style/CustomEditTextStyle"
             android:inputType="number"
             android:padding="14dp"
             android:textColor="@color/textColor"
-            android:textColorHint="@color/hintColor" /> <!-- Margen inferior para separar los campos -->
+            android:textColorHint="@color/hintColor" />
 
         <!-- Campo para ingresar peso -->
         <EditText
             android:id="@+id/weightInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Peso (kg)"
+            android:hint="Weight (kg)"
             android:inputType="number"
             style="@style/CustomEditTextStyle"
             android:padding="14dp"
             android:textColor="@color/textColor"
             android:textColorHint="@color/hintColor"
             android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+            android:layout_marginBottom="16dp"/>
 
         <!-- Campo para ingresar edad -->
         <EditText
@@ -62,20 +62,19 @@
             android:id="@+id/ageInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Edad"
+            android:hint="Age"
             android:inputType="number"
             android:padding="14dp"
             android:textColor="@color/textColor"
             android:textColorHint="@color/hintColor"
             android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="16dp"/> <!-- Margen inferior para separar los campos -->
+            android:layout_marginBottom="16dp"/>
 
         <Spinner
             android:id="@+id/intoleranceInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Margen inferior para separar los campos -->
     </LinearLayout>
 
     <!-- Botón para generar el menú personalizado -->
@@ -84,10 +83,9 @@
         android:id="@+id/generateMenuButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Generar Menú"
+        android:text="Generate Menu"
         android:layout_below="@id/userDataLayout"
         android:layout_marginTop="20dp" />
-
 
     <!-- Barra de progreso para mostrar que se está generando el menú -->
     <ProgressBar
@@ -109,16 +107,21 @@
         android:layout_marginTop="20dp">
 
         <!-- Menú generado dinámicamente se agrega aquí -->
-        <TextView
-            android:text="Menú generado:"
-            android:id="@+id/menuItem1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
-            android:textSize="16sp"
-            android:padding="8dp" />
 
-        <!-- Agregar más TextViews si es necesario -->
+        <!-- Wrap the TextView inside a ScrollView -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/menuItem1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textSize="16sp"
+                android:padding="8dp" />
+        </ScrollView>
 
     </LinearLayout>
+
 </RelativeLayout>
