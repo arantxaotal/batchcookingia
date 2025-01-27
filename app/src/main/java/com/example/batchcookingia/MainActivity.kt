@@ -30,7 +30,12 @@ import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var API_KEY: String
+    private lateinit var URL_IA: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        API_KEY = "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"
+        URL_IA = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"//"https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -284,7 +289,7 @@ class MainActivity : AppCompatActivity() {
     Provide a variety of meals for each day, ensuring there are no ingredients that i'm intolerant to.
 """.trimIndent()
 
-                val apiKey = "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"
+                val apiKey = API_KEY
                 val client = OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
@@ -301,7 +306,7 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 val request = Request.Builder()
-                    .url("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2")
+                    .url(URL_IA)
                     .addHeader("Authorization", "Bearer $apiKey")
                     .post(body)
                     .build()
